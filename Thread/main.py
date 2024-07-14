@@ -82,6 +82,9 @@ for post in links_array:
     if content:
         print(f'Descripción de la publicación: {content.get_text(strip=True)}')
     multimedia_array = []
+    links_post = soup.find_all('a')
+    # for a in links_post:
+    #     multimedia_array.append(a)
     image = soup.find_all('img', class_='xl1xv1r x1lq5wgf xgqcy7u x30kzoy x9jhf4c x9f619 x1lliihq xmz0i5r x193iq5w xuiwhb7 x1g40iwv x47corl x87ps6o x1ey2m1c xds687c x10l6tqk x17qophe x13vifvy x5yr21d xh8yej3')
     for img in image:
         if img:
@@ -92,5 +95,7 @@ for post in links_array:
         if vdo:
             video = vdo.get('src')
             multimedia_array.append(video)
+    print(f'Mulitmedia de la publicacion: {multimedia_array}')
+    multimedia_array = []
 
 input('Esperando respuesta: ')
