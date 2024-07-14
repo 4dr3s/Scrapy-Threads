@@ -12,37 +12,61 @@ link_login = drive.find_element(By.XPATH, '/html/body/div[2]/div/div/header/div[
 drive.get(link_login.get_attribute('href'))
 time.sleep(3)
 form = drive.find_element(By.TAG_NAME, 'form')
-inputs = form.find_elements(By.TAG_NAME, 'input')
-for input in inputs:
-    if 'Nombre de usuario, teléfono o correo electrónico' == input.get_attribute('placeholder'):
-        time.sleep(3)
-        input.send_keys('Correo')
-    if 'password' == input.get_attribute('type'):
-        time.sleep(3)
-        input.send_keys('Password')
-btn_login = form.find_elements(By.TAG_NAME, 'div')
-for btn in btn_login:
-    if 'button' == btn.get_attribute('role'):
-        time.sleep(3)
-        btn.click()
+divs = form.find_elements(By.TAG_NAME, 'div')
 time.sleep(3)
-drive.get('https://www.threads.net/search?q=veronica%20abad%2Cdaniel%20novoa&serp_type=default')
+for div in divs:
+    try:
+        if 'x1i10hfl xjbqb8w x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli x1n2onr6 x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x6bh95i x1re03b8 x1hvtcl2 x3ug3ww xfh8nwu xoqspk4 x12v9rci x138vmkv x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x178xt8z xm81vs4 xso031l xy80clv x78zum5 xn6708d x5ib6vp x1cnzs8 xx6bls6 x12w9bfk x1g2r6go x11xpdln xk4oym4' == div.get_attribute(
+                'class'):
+            time.sleep(3)
+            div.click()
+            time.sleep(3)
+            break
+    except Exception as ex:
+        print(ex)
+        exit(0)
+form = drive.find_element(By.TAG_NAME, 'form')
+btn_form = form.find_elements(By.TAG_NAME, 'button')
 time.sleep(3)
-container = drive.find_element(By.CLASS_NAME, 'xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck xx8ngbg xwo3gff x1n2onr6 x1oyok0e x1e4zzel x1plvlek xryxfnj')
-posts = container.find_elements(By.TAG_NAME, 'div')
+for btn in btn_form:
+    try:
+        if ' _acan _acao _acas _aj1- _ap30' == btn.get_attribute('class'):
+            time.sleep(3)
+            btn.click()
+            time.sleep(3)
+            break
+    except Exception as ex:
+        print(ex)
+        exit(0)
+form = drive.find_element(By.TAG_NAME, 'form')
+email = form.find_element(By.ID, 'email')
+email.send_keys('jandrade2024w@gmail.com')
+password = form.find_element(By.ID, 'pass')
+password.send_keys('hola12345.')
+btn_login = form.find_element(By.ID, 'loginbutton')
+btn_login.click()
+time.sleep(20)
+drive.get('https://www.threads.net/search?q=veronica%20abad&serp_type=default')
+time.sleep(3)
+divs = drive.find_elements(By.TAG_NAME, 'div')
 links_array = []
-for post in posts:
-    if 'x78zum5 xdt5ytf' == post.get_attribute('class'):
-        links = post.find_elements(By.TAG_NAME, 'a')
-        for link in links:
-            if 'x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1lku1pv x12rw4y6 xrkepyr x1citr7e x37wo2f' == link.get_attribute('class'):
-                link_profile = link.get_attribute('href')
-                links_array.append(f'https://www.threads.net{link_profile}')
+for div in divs:
+    if 'xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck xx8ngbg xwo3gff x1n2onr6 x1oyok0e x1e4zzel x1plvlek xryxfnj' == div.get_attribute('class'):
+        #container = drive.find_element(By.CLASS_NAME, 'xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck xx8ngbg xwo3gff x1n2onr6 x1oyok0e x1e4zzel x1plvlek xryxfnj')
+        posts = div.find_elements(By.TAG_NAME, 'div')
+        for post in posts:
+            if 'x78zum5 xdt5ytf' == post.get_attribute('class'):
+                links = post.find_elements(By.TAG_NAME, 'a')
+                for link in links:
+                    if 'x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1lku1pv x12rw4y6 xrkepyr x1citr7e x37wo2f' == link.get_attribute('class'):
+                        link_profile = link.get_attribute('href')
+                        links_array.append(f'{link_profile}')
 for post in links_array:
     drive.get(post)
     time.sleep(5)
     html = drive.page_source
     soup = BeautifulSoup(html, 'html.parser')
+    print(f'Link de publicación: {post}')
     profile_name = soup.find('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
     if profile_name:
         print(f'Nombre de usuario: {profile_name.get_text(strip=True)}')
