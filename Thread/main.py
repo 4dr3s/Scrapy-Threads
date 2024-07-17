@@ -1,11 +1,12 @@
 import time
 from bs4 import BeautifulSoup
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import json
 
 dict_thread_list = []
-drive = webdriver.Firefox()
+drive = webdriver.Edge()
 drive.get('https://www.threads.net')
 time.sleep(3)
 link_login = drive.find_element(By.XPATH, '/html/body/div[2]/div/div/header/div[3]/a')
@@ -46,20 +47,52 @@ password.send_keys('hola12345.')
 btn_login = form.find_element(By.ID, 'loginbutton')
 btn_login.click()
 time.sleep(20)
-drive.get('https://www.threads.net/search?q=veronica%20abad&serp_type=default')
+drive.get('https://www.threads.net/search?q=veronica%20abad%20daniel%20noboa&serp_type=default')
 time.sleep(3)
-divs = drive.find_elements(By.TAG_NAME, 'div')
+btn_recently = drive.find_elements(By.TAG_NAME, 'div')
+for div in btn_recently:
+    if 'x9f619 xmixu3c x78zum5 xkh2ocl xmupa6y xqmxbcd x14vqqas' == div.get_attribute('class'):
+        div.find_element(By.XPATH, './a[2]').click()
+        time.sleep(9)
+        break
 links_array = []
-for div in divs:
-    if 'xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck xx8ngbg xwo3gff x1n2onr6 x1oyok0e x1e4zzel x1plvlek xryxfnj' == div.get_attribute('class'):
-        posts = div.find_elements(By.TAG_NAME, 'div')
-        for post in posts:
-            if 'x78zum5 xdt5ytf' == post.get_attribute('class'):
-                links = post.find_elements(By.TAG_NAME, 'a')
-                for link in links:
-                    if 'x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1lku1pv x12rw4y6 xrkepyr x1citr7e x37wo2f' == link.get_attribute('class'):
-                        link_profile = link.get_attribute('href')
-                        links_array.append(link_profile)
+date_init = datetime(2023, 5, 24)
+divs = drive.find_elements(By.TAG_NAME, 'div')
+last_height = drive.execute_script("return document.body.scrollHeight")
+while True:
+    time_post = drive.find_elements(By.TAG_NAME, 'time')
+    for tmt in time_post:
+        i = 0
+        date_ = tmt.get_attribute('datetime')
+        date_post = datetime.strptime(date_, "%Y-%m-%dT%H:%M:%S.%fZ")
+        print(f'Fecha: {date_post}')
+        if date_post >= date_init:
+            try:
+                link = tmt.find_element(By.XPATH, '..')
+                if link:
+                    link_profile = link.get_attribute('href')
+                    if link_profile not in links_array:
+                        continue
+                    links_array.append(link_profile)
+                    print(f'Listado: {link_profile}')
+                    i = i + 1
+                    print(f'Publicacion N {i}')
+            except:
+                continue
+        else:
+            print('La fecha no concuerda o no esta en el rango definido')
+            break
+    else:
+        drive.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(7)
+        new_height = drive.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            break
+        last_height = new_height
+        continue
+    print('No hay mas publicaciones que concuerden salindo del for')
+    break
+
 for post in links_array:
     dict_thread = {}
     drive.get(post)
@@ -68,10 +101,12 @@ for post in links_array:
     soup = BeautifulSoup(html, 'html.parser')
     print(f'Visitando la publicación: {post}')
     dict_thread['post_link'] = post
-    profile_name = soup.find('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
+    profile_name = soup.find('span',
+                             class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
     if profile_name:
         dict_thread["user_name"] = profile_name.get_text(strip=True)
-    profile_link = soup.find('a', class_='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xp07o12 xzmqwrg x1citr7e x1kdxza xt0b8zv')
+    profile_link = soup.find('a',
+                             class_='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xp07o12 xzmqwrg x1citr7e x1kdxza xt0b8zv')
     if profile_link:
         link = profile_link.get('href')
         dict_thread["profile_link"] = f'https://www.threads.net{link}'
@@ -79,12 +114,14 @@ for post in links_array:
     if date:
         date = date.get('datetime')
         dict_thread["post_date"] = date
-    content = soup.find('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz xo1l8bm xp07o12 x1yc453h xat24cr xdj266r')
+    content = soup.find('span',
+                        class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz xo1l8bm xp07o12 x1yc453h xat24cr xdj266r')
     if content:
         dict_thread["description"] = content.get_text(strip=True)
     multimedia_array = []
     links_post = soup.find_all('a')
-    image = soup.find_all('img', class_='xl1xv1r x1lq5wgf xgqcy7u x30kzoy x9jhf4c x9f619 x1lliihq xmz0i5r x193iq5w xuiwhb7 x1g40iwv x47corl x87ps6o x1ey2m1c xds687c x10l6tqk x17qophe x13vifvy x5yr21d xh8yej3')
+    image = soup.find_all('img',
+                          class_='xl1xv1r x1lq5wgf xgqcy7u x30kzoy x9jhf4c x9f619 x1lliihq xmz0i5r x193iq5w xuiwhb7 x1g40iwv x47corl x87ps6o x1ey2m1c xds687c x10l6tqk x17qophe x13vifvy x5yr21d xh8yej3')
     for img in image:
         if img:
             image = img.get('src')
