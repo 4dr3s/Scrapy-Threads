@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 import json
 
 dict_thread_list = []
-drive = webdriver.Edge()
+drive = webdriver.Firefox()
 drive.get('https://www.threads.net')
 time.sleep(3)
 link_login = drive.find_element(By.XPATH, '/html/body/div[2]/div/div/header/div[3]/a')
@@ -41,13 +41,13 @@ for btn in btn_form:
         exit(0)
 form = drive.find_element(By.TAG_NAME, 'form')
 email = form.find_element(By.ID, 'email')
-email.send_keys('jandrade2024w@gmail.com')
+email.send_keys('usuario')
 password = form.find_element(By.ID, 'pass')
-password.send_keys('hola12345.')
+password.send_keys('password')
 btn_login = form.find_element(By.ID, 'loginbutton')
 btn_login.click()
 time.sleep(20)
-drive.get('https://www.threads.net/search?q=veronica%20abad%20daniel%20noboa&serp_type=default')
+drive.get('https://www.threads.net/search?q=veronica%20abad%20y%20daniel%20noboa&serp_type=default&filter=recent')
 time.sleep(3)
 btn_recently = drive.find_elements(By.TAG_NAME, 'div')
 for div in btn_recently:
@@ -56,13 +56,13 @@ for div in btn_recently:
         time.sleep(9)
         break
 links_array = []
-date_init = datetime(2023, 5, 24)
+date_init = datetime.strptime("2023-05-24T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 divs = drive.find_elements(By.TAG_NAME, 'div')
 last_height = drive.execute_script("return document.body.scrollHeight")
+i = 0
 while True:
     time_post = drive.find_elements(By.TAG_NAME, 'time')
     for tmt in time_post:
-        i = 0
         date_ = tmt.get_attribute('datetime')
         date_post = datetime.strptime(date_, "%Y-%m-%dT%H:%M:%S.%fZ")
         print(f'Fecha: {date_post}')
@@ -71,26 +71,30 @@ while True:
                 link = tmt.find_element(By.XPATH, '..')
                 if link:
                     link_profile = link.get_attribute('href')
-                    if link_profile not in links_array:
-                        continue
                     links_array.append(link_profile)
                     print(f'Listado: {link_profile}')
                     i = i + 1
+                    if i % 100 == 0:
+                        decision = input('Continuar? Y/N')
+                        if decision == 'N':
+                            break
                     print(f'Publicacion N {i}')
             except:
+                print(f'Continuando a la siguiente fecha')
                 continue
         else:
-            print('La fecha no concuerda o no esta en el rango definido')
+            print(f'Saliendo del if')
             break
     else:
         drive.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(7)
         new_height = drive.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
+            print('Mismo tamaño')
             break
         last_height = new_height
         continue
-    print('No hay mas publicaciones que concuerden salindo del for')
+    print('No hay mas publicaciones que concuerden')
     break
 
 for post in links_array:
