@@ -75,7 +75,7 @@ while True:
                     links_array.append(link_profile)
                     print(f'Listado: {link_profile}')
                     i = i + 1
-                    if i % 10 == 0:
+                    if i % 100 == 0:
                         decision = input('Continuar? Y/N')
                         if decision == 'N':
                             break
@@ -97,14 +97,16 @@ while True:
         continue
     print('No hay mas publicaciones que concuerden')
     break
-
+i = 0
 for post in links_array:
+    i = i + 1
     dict_thread = {}
     drive.get(post)
     time.sleep(5)
     html = drive.page_source
     soup = BeautifulSoup(html, 'html.parser')
     print(f'Visitando la publicación: {post}')
+    dict_thread['id'] = i
     dict_thread['post_link'] = post
     profile_name = soup.find_all('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
     for name_et in profile_name:
@@ -132,7 +134,7 @@ for post in links_array:
             if hashtags:
                 dict_thread["hashtags"] = hashtags
             else:
-                dict_thread["hashtags"] = ''
+                dict_thread["hashtags"] = ["None"]
         except Exception as ex:
             print(ex)
     reactions = soup.find_all('span', class_='x10l6tqk x17qophe x13vifvy')
@@ -143,9 +145,6 @@ for post in links_array:
         else:
             suma = 0 + suma
     dict_thread["reactions"] = suma
-
-    # Tendencias
-
     dict_thread_list.append(dict_thread)
 
 with open('C:/Users/andre/Downloads/datos_threads.json', 'w', encoding='utf-8') as json_file:
