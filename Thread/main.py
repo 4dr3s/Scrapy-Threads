@@ -18,8 +18,7 @@ divs = form.find_elements(By.TAG_NAME, 'div')
 time.sleep(3)
 for div in divs:
     try:
-        if 'x1i10hfl xjbqb8w x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli x1n2onr6 x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x6bh95i x1re03b8 x1hvtcl2 x3ug3ww xfh8nwu xoqspk4 x12v9rci x138vmkv x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x178xt8z xm81vs4 xso031l xy80clv x78zum5 xn6708d x5ib6vp x1cnzs8 xx6bls6 x12w9bfk x1g2r6go x11xpdln xk4oym4' == div.get_attribute(
-                'class'):
+        if 'x1i10hfl xjbqb8w x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli x1n2onr6 x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1q0g3np x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x6bh95i x1re03b8 x1hvtcl2 x3ug3ww xfh8nwu xoqspk4 x12v9rci x138vmkv x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x178xt8z xm81vs4 xso031l xy80clv x78zum5 xn6708d x5ib6vp x1cnzs8 xx6bls6 x12w9bfk x1g2r6go x11xpdln xk4oym4' == div.get_attribute('class'):
             time.sleep(3)
             div.click()
             time.sleep(3)
@@ -107,6 +106,7 @@ for post in links_array:
     soup = BeautifulSoup(html, 'html.parser')
     print(f'Visitando la publicación: {post}')
     dict_thread['id'] = i
+    dict_thread['fuente'] = "threads"
     dict_thread['post_link'] = post
     profile_name = soup.find_all('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
     for name_et in profile_name:
