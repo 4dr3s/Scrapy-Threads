@@ -4,6 +4,7 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import json
+import re
 
 dict_thread_list = []
 drive = webdriver.Firefox()
@@ -41,9 +42,9 @@ for btn in btn_form:
         exit(0)
 form = drive.find_element(By.TAG_NAME, 'form')
 email = form.find_element(By.ID, 'email')
-email.send_keys('usuario')
+email.send_keys('vijib84329@modotso.com')
 password = form.find_element(By.ID, 'pass')
-password.send_keys('password')
+password.send_keys('12345inge')
 btn_login = form.find_element(By.ID, 'loginbutton')
 btn_login.click()
 time.sleep(20)
@@ -74,7 +75,7 @@ while True:
                     links_array.append(link_profile)
                     print(f'Listado: {link_profile}')
                     i = i + 1
-                    if i % 100 == 0:
+                    if i % 10 == 0:
                         decision = input('Continuar? Y/N')
                         if decision == 'N':
                             break
@@ -105,39 +106,47 @@ for post in links_array:
     soup = BeautifulSoup(html, 'html.parser')
     print(f'Visitando la publicación: {post}')
     dict_thread['post_link'] = post
-    profile_name = soup.find('span',
-                             class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
-    if profile_name:
-        dict_thread["user_name"] = profile_name.get_text(strip=True)
-    profile_link = soup.find('a',
-                             class_='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xp07o12 xzmqwrg x1citr7e x1kdxza xt0b8zv')
+    profile_name = soup.find_all('span', class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz x1s688f xp07o12 x1yc453h')
+    for name_et in profile_name:
+        parent = name_et.parent
+        if parent.name == 'a':
+            if name_et.get_text(strip=True) != 'Hilo':
+                dict_thread["user_name"] = name_et.get_text(strip=True)
+
+    profile_link = soup.find('a', class_='x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xp07o12 xzmqwrg x1citr7e x1kdxza xt0b8zv')
     if profile_link:
         link = profile_link.get('href')
         dict_thread["profile_link"] = f'https://www.threads.net{link}'
+
     date = soup.find('time', class_='x1rg5ohu xnei2rj x2b8uid xuxw1ft')
     if date:
         date = date.get('datetime')
-        dict_thread["post_date"] = date
-    content = soup.find('span',
-                        class_='x1lliihq x1plvlek xryxfnj x1n2onr6 x193iq5w xeuugli x1fj9vlw x13faqbe x1vvkbs x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x1i0vuye xjohtrz xo1l8bm xp07o12 x1yc453h xat24cr xdj266r')
+        fecha = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+        dict_thread["post_date"] = fecha.strftime('%Y-%m-%d')
+
+    content = soup.find('div', class_='x1a6qonq x6ikm8r x10wlt62 xj0a0fe x126k92a x6prxxf x7r5mf7')
     if content:
         dict_thread["description"] = content.get_text(strip=True)
-    multimedia_array = []
-    links_post = soup.find_all('a')
-    image = soup.find_all('img',
-                          class_='xl1xv1r x1lq5wgf xgqcy7u x30kzoy x9jhf4c x9f619 x1lliihq xmz0i5r x193iq5w xuiwhb7 x1g40iwv x47corl x87ps6o x1ey2m1c xds687c x10l6tqk x17qophe x13vifvy x5yr21d xh8yej3')
-    for img in image:
-        if img:
-            image = img.get('src')
-            multimedia_array.append(image)
-    video = soup.find_all('video', class_='x1lliihq x5yr21d xh8yej3')
-    for vdo in video:
-        if vdo:
-            video = vdo.get('src')
-            multimedia_array.append(video)
-    dict_thread["multimedia"] = multimedia_array
+        try:
+            hashtags = re.findall(r'#\w+', content.get_text(strip=True))
+            if hashtags:
+                dict_thread["hashtags"] = hashtags
+            else:
+                dict_thread["hashtags"] = ''
+        except Exception as ex:
+            print(ex)
+    reactions = soup.find_all('span', class_='x10l6tqk x17qophe x13vifvy')
+    suma = 0
+    for reaction in reactions:
+        if reaction:
+            suma = int(reaction.get_text(strip=True)) + suma
+        else:
+            suma = 0 + suma
+    dict_thread["reactions"] = suma
+
+    # Tendencias
+
     dict_thread_list.append(dict_thread)
-    multimedia_array = []
 
 with open('C:/Users/andre/Downloads/datos_threads.json', 'w', encoding='utf-8') as json_file:
     json.dump(dict_thread_list, json_file, ensure_ascii=False, indent=4)
